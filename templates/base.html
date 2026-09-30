@@ -1,0 +1,67 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Dom Sweet{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue-royal: #1646b8;
+      --blue-light: #dff3ff;
+      --blue-sky: #5cc8f5;
+      --purple: #7547c7;
+      --ink: #172b4d;
+    }
+    body { font-family: Nunito, sans-serif; background: #f2f9ff; color: var(--ink); }
+    .navbar { background: var(--blue-royal); }
+    .brand { font-weight: 800; color: #fff !important; display: inline-flex; align-items: center; gap: .5rem; }
+    .brand-logo { width: 2.1rem; height: 2.1rem; }
+    .hero { background: linear-gradient(135deg, var(--blue-royal), var(--blue-sky)); color: #fff; border-radius: 24px; }
+    .card { border: 0; border-radius: 18px; box-shadow: 0 8px 25px #1646b81c; }
+    .btn-primary { background: linear-gradient(135deg, var(--blue-sky), var(--purple)); border: 0; }
+    .btn-primary:hover { background: linear-gradient(135deg, #3bb7eb, #6133b2); }
+    .badge-soft { background: var(--blue-light); color: var(--blue-royal); }
+    .stat { font-size: 2rem; font-weight: 800; color: var(--blue-royal); }
+    .form-control, .form-select { border-radius: 12px; border-color: #b9d9ee; }
+    .table { vertical-align: middle; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+    <div class="container">
+      <a class="navbar-brand brand" href="{% url 'dashboard' %}" aria-label="Dom Sweet, inicio">
+        <span class="brand-logo" role="img" aria-label="Helado">🍦</span>
+        Dom Sweet
+      </a>
+      <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav"><span class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="nav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link" href="{% url 'productos' %}">Productos</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'ingredientes' %}">Ingredientes</a></li>
+        </ul>
+        <div class="d-flex align-items-center gap-2">
+          {% if user.is_authenticated %}
+            <span class="text-white-50">Hola, {{ user.first_name|default:user.username }}</span>
+            <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn btn-outline-light btn-sm">Salir</button></form>
+          {% else %}
+            <a class="btn btn-outline-light btn-sm" href="{% url 'login' %}">Ingresar</a>
+            <a class="btn btn-primary btn-sm" href="{% url 'registro' %}">Registrarme</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+  <main class="container pb-5">
+    {% for message in messages %}
+      <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags|default:'info' }}{% endif %} alert-dismissible fade show">
+        {{ message }}<button class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+    {% block content %}{% endblock %}
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
